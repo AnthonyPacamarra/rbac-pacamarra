@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <h1>Manage Users</h1>
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success" role="alert">
             {{ session('success') }}
         </div>
     @endif
@@ -13,7 +13,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
                     <th>Email</th>
                     @foreach($roles as $role)
                         <th>{{ $role->name }}</th>
@@ -23,7 +24,8 @@
             <tbody>
                 @foreach($users as $user)
                     <tr>
-                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->user_firstname }}</td>
+                        <td>{{ $user->user_lastname }}</td>
                         <td>{{ $user->email }}</td>
                         @foreach($roles as $role)
                             <td>
@@ -38,7 +40,7 @@
         <button type="submit" class="btn btn-primary">Update Roles</button>
     </form>
     <p>
-        <a href="{{ route('home') }}" class="link-dark">Back</a>
+        <a href="{{ route('dash') }}" class="link-dark">Back</a>
     </p>
 </div>
 @endsection
