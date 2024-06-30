@@ -6,7 +6,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookController;
 
-
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -32,6 +31,8 @@ Route::middleware('auth')->group(function(){
     Route::get('/admin/roles/{role}/edit', [AdminController::class, 'editRole'])->name('roles.edit')->middleware('role:admin');
     Route::put('/admin/roles/{role}/update', [AdminController::class, 'updateRole'])->name('roles.update')->middleware('role:admin');
     Route::delete('/admin/roles/{role}/delete', [AdminController::class, 'deleteRole'])->name('roles.delete')->middleware('role:admin');
+    Route::get('/admin/roles/{role}/users', [AdminController::class, 'viewUsersByRole'])->name('roles.viewUsers')->middleware('role:admin');
+
 
     Route::get('/acctg/new',[BookController::class,'newLedgerEntry'])->middleware(['role:admin,bookeeper,auditor'])->name('newledger');
     Route::post('/acctg/new',[BookController::class,'saveNewLedgerEntry'])->middleware('role:admin,bookeeper')->name('saveledger');

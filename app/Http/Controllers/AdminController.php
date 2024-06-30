@@ -18,8 +18,9 @@ class AdminController extends Controller
     public function manageUsers()
     {
         $users = User::select('users.id', 'userinfos.user_firstname', 'userinfos.user_lastname', 'users.email')
-                     ->join('userinfos', 'users.id', '=', 'userinfos.user_id')
-                     ->get();
+            ->join('userinfos', 'users.id', '=', 'userinfos.user_id')
+            ->get();
+        $users = User::select('id', 'name', 'email')->paginate(10);
 
         $roles = Role::all();
         $permissions = Permission::all();
@@ -71,7 +72,7 @@ class AdminController extends Controller
     public function updateRole(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name,'.$role->id.'|max:255',
+            'name' => 'required|unique:roles,name,' . $role->id . '|max:255',
         ]);
 
         $role->update([
@@ -86,5 +87,12 @@ class AdminController extends Controller
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+    }
+
+    public function viewUsersByRole(Role $role)
+    {
+        $users = $role->users()->with('userInfo')->get();
+
+        return view('admin.roles.viewUsers', compact('role', 'users'));
     }
 }

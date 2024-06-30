@@ -1,5 +1,7 @@
 @extends('mainLayout')
 
+@section('title','Manage Users')
+
 @section('page-content')
 <div class="container-fluid">
     <h1>Manage Users</h1>
@@ -13,8 +15,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
+                    <th>ID</th>
+                    <th>Fullname</th>
                     <th>Email</th>
                     @foreach($roles as $role)
                         <th>{{ $role->name }}</th>
@@ -24,8 +26,8 @@
             <tbody>
                 @foreach($users as $user)
                     <tr>
-                        <td>{{ $user->user_firstname }}</td>
-                        <td>{{ $user->user_lastname }}</td>
+                        <td>{{ $user->id }}</td>
+                        <td>{{ $user->userInfo->user_firstname.' '.$user->userInfo->user_lastname }}</td>
                         <td>{{ $user->email }}</td>
                         @foreach($roles as $role)
                             <td>

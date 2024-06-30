@@ -1,5 +1,7 @@
 @extends('mainLayout')
 
+@section('title','Edit Role')
+
 @section('page-content')
     <div class="container-fluid">
         <h1>Edit Role: {{ $role->name }}</h1>

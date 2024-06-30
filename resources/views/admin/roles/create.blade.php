@@ -1,5 +1,7 @@
 @extends('mainLayout')
 
+@section('title','Create Role')
+
 @section('page-content')
     <div class="container-fluid">
         <h1>Create New Role</h1>
