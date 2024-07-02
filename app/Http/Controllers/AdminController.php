@@ -44,6 +44,13 @@ class AdminController extends Controller
         return redirect()->route('usertool')->with('success', 'User roles updated successfully.');
     }
 
+    public function deleteUser(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('usertool')->with('success', 'User deleted successfully.');
+    }
+
 
 
     public function indexRoles()

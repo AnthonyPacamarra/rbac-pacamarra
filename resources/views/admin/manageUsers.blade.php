@@ -28,6 +28,7 @@
                     @foreach($roles as $role)
                         <th>{{ $role->name }}</th>
                     @endforeach
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,12 +42,17 @@
                                <p>{{ $permission->name }}</p>
                             @endforeach
                         </td>
+
                         @foreach($roles as $role)
-                            <td>
-                                <input type="checkbox" name="roles[{{ $user->id }}][]" value="{{ $role->id }}"
-                                {{ $user->roles->contains($role) ? 'checked' : '' }}>
-                            </td>
+                        <td>
+                            <input type="checkbox" name="roles[{{ $user->id }}][]" value="{{ $role->id }}"
+                            {{ $user->roles->contains($role) ? 'checked' : '' }}>
+                        </td>
                         @endforeach
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger"
+                                    onclick="confirmDelete('{{ route('users.delete', $user->id) }}')">Delete</button>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -54,4 +60,21 @@
         <button type="submit" class="btn btn-primary">Update Roles</button>
     </form>
 </div>
+
+<script>
+    function confirmDelete(deleteUrl) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            let form = document.createElement('form');
+            form.action = deleteUrl;
+            form.method = 'POST';
+            form.innerHTML = `
+                @csrf
+                @method('DELETE')
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+
 @endsection
