@@ -4,7 +4,11 @@
 
 @section('page-content')
 <div class="container-fluid">
-    <h1>Users with Role: {{ $role->name }}</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Users with Role: {{ $role->name }}</h1>
+        <a href="{{ route('roles.index') }}" class="link-dark">Back</a>
+    </div>
+
     <table class="table">
         <thead>
             <tr>
@@ -23,8 +27,5 @@
             @endforeach
         </tbody>
     </table>
-    <p>
-        <a href="{{ route('roles.index') }}" class="link-dark">Back to Roles</a>
-    </p>
 </div>
 @endsection

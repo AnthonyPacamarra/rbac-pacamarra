@@ -17,15 +17,19 @@ class AdminController extends Controller
 
     public function manageUsers()
     {
-        $users = User::select('users.id', 'userinfos.user_firstname', 'userinfos.user_lastname', 'users.email')
-            ->join('userinfos', 'users.id', '=', 'userinfos.user_id')
-            ->get();
-        $users = User::select('id', 'name', 'email')->paginate(10);
-
+        $users = User::with('roles.permissions', 'userInfo')->get();
         $roles = Role::all();
         $permissions = Permission::all();
 
-        return view('admin.manageUsers')->with(compact('users', 'roles'));
+        foreach ($users as $user) {
+            $userPermissions = collect();
+            foreach ($user->roles as $role) {
+                $userPermissions = $userPermissions->merge($role->permissions);
+            }
+            $user->permissions = $userPermissions->unique('id');
+        }
+
+        return view('admin.manageUsers', compact('users', 'roles', 'permissions'));
     }
 
     public function updateRoles(Request $request)
@@ -40,44 +44,62 @@ class AdminController extends Controller
         return redirect()->route('usertool')->with('success', 'User roles updated successfully.');
     }
 
+
+
     public function indexRoles()
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions')->get();
         return view('admin.roles.index', compact('roles'));
     }
+    
 
     public function createRole()
     {
-        return view('admin.roles.create');
+        $permissions = Permission::all();
+        return view('admin.roles.create', compact('permissions'));
     }
 
     public function storeRole(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:roles|max:255',
+            'name' => 'required|unique:roles',
         ]);
 
-        Role::create([
+        $role = Role::create([
             'name' => $request->name,
         ]);
+
+        if ($request->has('permissions')) {
+            $role->permissions()->sync($request->permissions);
+        }
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
 
+    public function viewUsersByRole(Role $role)
+    {
+        $users = $role->users()->with('userInfo')->get();
+
+        return view('admin.roles.viewUsers', compact('role', 'users'));
+    }
+
     public function editRole(Role $role)
     {
-        return view('admin.roles.edit', compact('role'));
+        $permissions = Permission::all();
+        return view('admin.roles.edit', compact('role', 'permissions'));
     }
 
     public function updateRole(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|unique:roles,name,' . $role->id . '|max:255',
+            'name' => 'required|unique:roles,name,' . $role->id,
         ]);
 
         $role->update([
             'name' => $request->name,
         ]);
+
+        $role->permissions()->sync($request->permissions);
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
@@ -87,12 +109,5 @@ class AdminController extends Controller
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
-    }
-
-    public function viewUsersByRole(Role $role)
-    {
-        $users = $role->users()->with('userInfo')->get();
-
-        return view('admin.roles.viewUsers', compact('role', 'users'));
     }
 }
